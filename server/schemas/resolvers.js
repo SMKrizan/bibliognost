@@ -5,15 +5,16 @@ const { signToken } = require('../utils/auth');
 const resolvers = {
     Query: {
         // get user by username or id (mongoDB always includes the '_id' field unless it is specifically excluded)
-        me: async (parent, { username }) => {
-            const foundUser = await User.findOne({ username })
-                .select('-__v -password');
-
-            if (!foundUser) {
-                throw new AuthenticationError('Unable to find this user.');
+        me: async (parent, args, context) => {
+            if (context.user) {
+                console.log(context.user)
+                const userData = await  User.findOne({ _id: context.user._id })
+                .select('-__v -password')
+                .populate('savedBooks')
+    
+                return userData;
             }
-
-            return user;
+            throw new AuthenticationError('Not logged in');
         },
     },
 
@@ -22,10 +23,6 @@ const resolvers = {
         addUser: async (parent, args) => {
             const user = await User.create(args);
             const token = signToken(user);
-
-            if (!user) {
-                throw new AuthenticationError('Something went wrong with this request.')
-            }
 
             return { token, user };
         },
@@ -47,13 +44,20 @@ const resolvers = {
         },
 
         // save a book to a user's `savedBooks` field by adding it to the set (to prevent duplicates)
-        saveBook: async (parent, { bookId }, context) => {
-            console.log('user: ', user)
+        saveBook: async (parent, args, context) => {
             if (context.user) {
+                const bookstats = { 
+                    bookId: args.bookId, 
+                    description: args.description, 
+                    title: args.title, 
+                    authors: args.authors,
+                    image: args.image,
+                    link: args.link
+              }
                 const updateUserBooks = await User.findByIdAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { savedBooks: bookId } },
-                    // recall: without the following statement Mongo will return the original instead of updated document
+                    { $addToSet: { savedBooks: bookstats } },
+                    // recall: w/out 'new: true' Mongo will return the original instead of updated document
                     { new: true }
                 ).populate('savedBooks')
 
