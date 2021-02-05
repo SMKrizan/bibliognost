@@ -5,9 +5,16 @@ const secret = `${process.env.SECRET}`;
 const expiration = '2h';
 
 module.exports = {
+  // expects user object
+  signToken: function ({ username, email, _id }) {
+    const payload = { username, email, _id };
+
+    return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
+  },
+
   // function for our authenticated routes
   authMiddleware: function ({ req }) {
-    // allows enables token to be sent via req.body, req.query, or headers
+    // enables token to be sent via req.body, req.query, or headers
     let token = req.body.token || req.query.token || req.headers.authorization;
 
     // separates ["Bearer", "<tokenvalue>"]
@@ -17,7 +24,6 @@ module.exports = {
 
     // if no token, returns message and request object as-is
     if (!token) {
-      res.status(400).json({ message: 'You have no token!' });
       return req;
     }
 
@@ -28,17 +34,9 @@ module.exports = {
       req.user = data;
     } catch {
       console.log('Invalid token');
-      return res.status(400).json({ message: 'invalid token!' });
     }
 
     // returns updated request object
     return req;
-  },
-
-  // expects user object
-  signToken: function ({ username, email, _id }) {
-    const payload = { username, email, _id };
-
-    return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
   },
 };

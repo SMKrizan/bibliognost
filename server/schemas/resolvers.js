@@ -5,7 +5,7 @@ const { signToken } = require('../utils/auth');
 const resolvers = {
     Query: {
         // get user by username or id (mongoDB always includes the '_id' field unless it is specifically excluded)
-        user: async (parent, { username }) => {
+        me: async (parent, { username }) => {
             const foundUser = await User.findOne({ username })
                 .select('-__v -password');
 
@@ -49,7 +49,6 @@ const resolvers = {
         // save a book to a user's `savedBooks` field by adding it to the set (to prevent duplicates)
         saveBook: async (parent, { bookId }, context) => {
             console.log('user: ', user)
-            // IMPLEMENT THIS AS A TRY/CATCH?
             if (context.user) {
                 const updateUserBooks = await User.findByIdAndUpdate(
                     { _id: context.user._id },
@@ -66,7 +65,17 @@ const resolvers = {
 
         // remove a book from `savedBooks`
         removeBook: async (parent, { bookId }, context) => {
+            if (context.user) {
+                const updatedUser = await User.findOneAndUpdate(
+                    { _id: context.user._id },
+                    { $pull: { savedBooks: { bookId: params.bookId } } },
+                    { new: true }
+                ).populate('savedBooks')
 
+                return updatedUser;
+            }
+
+            throw new AuthenticationError("You need to be logged in.");
         }
     }
 };
