@@ -13,7 +13,7 @@ const SearchBooks = () => {
   const [searchInput, setSearchInput] = useState('');
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
-  // 'useMutation' hook creates and prepares JS fn that wraps and returns mutation code in the form of 'saveBook' fn while also checking for errors
+  // 'useMutation' hook creates/prepares fn that returns mutation code in the form of 'saveBook' fn and checks for errors
   const [saveBook, { error }] = useMutation(SAVE_BOOK);
 
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
@@ -43,9 +43,10 @@ const SearchBooks = () => {
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
         title: book.volumeInfo.title,
-        description: book.volumeInfo.description,
+        description: book.volumeInfo.description || 'No description available.',
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
+      console.log('bookData: ', bookData)
 
       setSearchedBooks(bookData);
       setSearchInput('');
@@ -58,23 +59,39 @@ const SearchBooks = () => {
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
+    console.log('bookToSave: ', bookToSave)
 
     // get token
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
-      return false;
-    }
-
-    try {
-      const response = await saveBook(bookToSave, token);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
+      return (
+        <h2>
+          You must be logged in to store book information. Use the navigation links above to sign up or log in!
+        </h2>
+        )
       }
 
+    try {
+      const { data } = await saveBook({
+        // variables: { bookData: { ...bookToSave } },
+        // variables: { ...bookToSave }
+        variables: { 
+          bookId: bookToSave.bookId, 
+          title: bookToSave.title,
+          description: bookToSave.description, 
+          authors: bookToSave.authors, 
+          image: bookToSave.image, 
+          link: bookToSave.link }
+      });
+      console.log('handleSaveBook-data: ', data)
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+      let collection = getSavedBookIds()
+      let updatedCollection = collection.push(bookToSave.bookId)
+      saveBookIds(updatedCollection)
+      console.log('updatedCollection: ', updatedCollection)
+
     } catch (err) {
       console.error(err);
     }

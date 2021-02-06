@@ -22,8 +22,8 @@ const resolvers = {
         // create a user, sign a token, and send it back (to client/src/components/SignUpForm.js)
         addUser: async (parent, args) => {
             try {
-                var user = await User.create(args);
-                var token = signToken(user);
+                const user = await User.create(args);
+                const token = signToken(user);
 
             } catch(err) {
                 console.log("error: ", err)
@@ -60,12 +60,15 @@ const resolvers = {
                     image: args.image,
                     link: args.link
               }
+              console.log('bookstats: ', bookstats)
                 const updateUserBooks = await User.findByIdAndUpdate(
                     { _id: context.user._id },
                     { $addToSet: { savedBooks: bookstats } },
                     // recall: w/out 'new: true' Mongo will return the original instead of updated document
                     { new: true }
-                ).populate('savedBooks')
+                )
+                // ).populate('savedBooks')
+                console.log('updateUserBooks: ', updateUserBooks)
 
                 return updateUserBooks;
             }

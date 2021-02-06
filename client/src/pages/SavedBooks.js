@@ -13,7 +13,7 @@ const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
   const userData = data?.me || {};
 
-  // 'useMutation' hook creates and prepares JS fn that wraps and returns mutation code in the form of 'removeBook' fn and checks for errors
+  // 'useMutation' hook creates fn that returns mutation code in the form of 'removeBook' fn and checks for errors
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
