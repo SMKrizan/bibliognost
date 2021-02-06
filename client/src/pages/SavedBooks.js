@@ -30,20 +30,22 @@ const SavedBooks = () => {
 
     try {
       const { data } = await removeBook({
-        // variables: { bookId },
-        variables: { 
-          bookId: userData.bookId, 
-          title: userData.title,
-          description: userData.description, 
-          authors: userData.authors, 
-          image: userData.image, 
-          link: userData.link }
-      });
-      // upon success, remove book's id from localStorage
-      removeBookId(bookId);
-    } catch (err) {
-      console.error(err);
-    }
+        variables: { userData: bookId },
+        // variables: { 
+          //   bookId: userData.bookId, 
+          //   title: userData.title,
+          //   description: userData.description, 
+          //   authors: userData.authors, 
+          //   image: userData.image, 
+          //   link: userData.link }
+        });
+        // upon success, remove book's id from localStorage
+        console.log('userData: ', userData)
+        console.log('userData.bookId : ', userData.bookId)
+        removeBookId(bookId);
+      } catch (err) {
+        console.error(err);
+      }
   };
 
   // if data isn't here yet, say so
