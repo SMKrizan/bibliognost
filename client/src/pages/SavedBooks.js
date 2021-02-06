@@ -12,7 +12,7 @@ const SavedBooks = () => {
   // 'useQuery' hook requests data and stores response from server; 'loading' will be used to conditionally render data based on whether there is data to display
   const { loading, data } = useQuery(GET_ME);
   const userData = data?.me || {};
-
+  console.log('userData: ', userData)
   // 'useMutation' hook creates fn that returns mutation code in the form of 'removeBook' fn and checks for errors
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
@@ -30,7 +30,14 @@ const SavedBooks = () => {
 
     try {
       const { data } = await removeBook({
-        variables: { bookId },
+        // variables: { bookId },
+        variables: { 
+          bookId: userData.bookId, 
+          title: userData.title,
+          description: userData.description, 
+          authors: userData.authors, 
+          image: userData.image, 
+          link: userData.link }
       });
       // upon success, remove book's id from localStorage
       removeBookId(bookId);

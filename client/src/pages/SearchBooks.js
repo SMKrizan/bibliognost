@@ -87,10 +87,10 @@ const SearchBooks = () => {
       console.log('handleSaveBook-data: ', data)
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
-      let collection = getSavedBookIds()
-      let updatedCollection = collection.push(bookToSave.bookId)
-      saveBookIds(updatedCollection)
-      console.log('updatedCollection: ', updatedCollection)
+      // let collection = getSavedBookIds()
+      // let updatedCollection = collection.push(bookToSave.bookId)
+      // saveBookIds(updatedCollection)
+      // console.log('updatedCollection: ', updatedCollection)
 
     } catch (err) {
       console.error(err);
