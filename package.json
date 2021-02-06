@@ -1,5 +1,5 @@
 {
-  "name": "googlebooks-app",
+  "name": "bibliognost",
   "version": "1.0.0",
   "description": "",
   "main": "server/server.js",
@@ -12,12 +12,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@work.github.com:arosenkranz/googlebooks-app.git"
+    "url": "https://github.com/SMKrizan/bibliognost"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "if-env": "^1.0.4"
   },
   "devDependencies": {

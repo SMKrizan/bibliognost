@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-
-import { createUser } from '../utils/API';
+import { useMutation } from '@apollo/react-hooks';
+import { ADD_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
 const SignupForm = () => {
@@ -11,6 +11,8 @@ const SignupForm = () => {
   const [validated] = useState(false);
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
+  // hook prepares fn that returns mutation code in the form of 'addUser' fn and checks for errors
+  const [addUser, { error }] = useMutation(ADD_USER); 
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -28,20 +30,21 @@ const SignupForm = () => {
     }
 
     try {
-      const response = await createUser(userFormData);
+      // executes 'addUser' mutation fn and passes in form-data variables
+      const { data } = await addUser({
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const { token, user } = await response.json();
-      console.log(user);
-      Auth.login(token);
+        // spread operator sets variables field within mutation to be object with key/value pairs matching 'formState' object
+        variables: { ...userFormData }
+      });
+      console.log('data: ', data)
+      
+      Auth.login(data.addUser.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
     }
 
+    // resets form fields
     setUserFormData({
       username: '',
       email: '',
