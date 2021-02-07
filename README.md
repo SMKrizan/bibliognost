@@ -49,6 +49,8 @@ Bibliognost: "one who possesses an encyclopedic knowledge of books and bibliogra
 
 
 ## <a name="usage">Usage</a>:
+
+<img src="./Screenshot-bibliognost.jpg" alt="a glimpse of the bibliognost book search application">
 GitHub Repository:
 https://github.com/SMKrizan/bibliognost
 
