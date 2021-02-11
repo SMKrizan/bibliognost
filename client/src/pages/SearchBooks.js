@@ -46,7 +46,6 @@ const SearchBooks = () => {
         description: book.volumeInfo.description || 'No description available.',
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
-      console.log('bookData: ', bookData)
 
       setSearchedBooks(bookData);
       setSearchInput('');
@@ -87,10 +86,6 @@ const SearchBooks = () => {
       console.log('handleSaveBook-data: ', data)
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
-      // let collection = getSavedBookIds()
-      // let updatedCollection = collection.push(bookToSave.bookId)
-      // saveBookIds(updatedCollection)
-      // console.log('updatedCollection: ', updatedCollection)
 
     } catch (err) {
       console.error(err);
