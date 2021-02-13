@@ -1,5 +1,5 @@
 // dependencies
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 // utilities
@@ -12,7 +12,6 @@ const SavedBooks = () => {
   // 'useQuery' hook requests data and stores response from server; 'loading' will be used to conditionally render data based on whether there is data to display
   const { loading, data } = useQuery(GET_ME);
   const userData = data?.me || {};
-  
   // 'useMutation' hook creates fn that returns mutation code in the form of 'removeBook' fn and checks for errors
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
@@ -29,8 +28,6 @@ const SavedBooks = () => {
     }
 
     try {
-      console.log('userData: ', userData)
-      console.log('bookId: ', bookId)
       const { data } = await removeBook({
         variables: { bookId },
         });
